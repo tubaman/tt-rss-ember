@@ -38,8 +38,8 @@ function TtRss(url) {
 			});
 	}
 
-	self.getHeadlines = function(feedId) {
-		return api({op: 'getHeadlines', feed_id: feedId})
+	self.getHeadlines = function(feedId, limit, skip) {
+		return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip})
 			.then(function(data) {
 				return data.content;
 			});

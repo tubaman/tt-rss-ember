@@ -104,6 +104,21 @@ App.LoginController = Ember.Controller.extend({
   }
 });
 
+App.HeadlinesController = Ember.Controller.extend({
+  isLoading: false,
+
+  actions: {
+    loadMore: function() {
+      var self = this;
+      console.log("loading more")
+      self.set('isLoading', true);
+      return this.get('model').get('headlines').next().then(function() {
+        self.set('isLoading', false);
+      });
+    }
+  }
+});
+
 /* models */
 App.Category = Ember.Object.extend({});
 App.Categories = Ember.ArrayProxy.create({
@@ -161,25 +176,45 @@ App.Headline = Ember.Object.extend({});
 App.Headlines = Ember.ArrayProxy.create({
   content: [],
   currentFeedId: null,
+  limit: 50,
+  skip: 0,
 
-  fetch: function(feedId) {
+  getHeadlines: function(feedId, limit, skip) {
     var self = this;
     var content = this.get('content');
     var ttrss = new TtRss();
-
-    if (feedId == self.get('currentFeedId') && self.get('length') != 0)
-    {
-      return self;
-    }
-
-    content.clear();
-    return ttrss.getHeadlines(feedId).then(function(headlines) {
+    return ttrss.getHeadlines(feedId, limit, skip)
+    .then(function(headlines) {
       headlines.forEach(function(data) {
         var headline = App.Headline.create();
         headline.setProperties(data);
         content.pushObject(headline);
       });
       self.set('currentFeedId', feedId);
+      self.set('skip', skip + headlines.length);
     });
+  },
+
+  fetch: function(feedId) {
+    var self = this;
+    var content = this.get('content');
+
+    if (feedId == self.get('currentFeedId') && self.get('length') != 0)
+    {
+      return self;
+    }
+    content.clear();
+    self.set('skip', 0);
+
+    return self.getHeadlines(feedId, self.get('limit'), self.get('skip'));
+  },
+
+  next: function() {
+    return this.getHeadlines(
+      this.get('currentFeedId'),
+      this.get('limit'),
+      this.get('skip')
+    );
   }
+
 });
