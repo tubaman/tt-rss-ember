@@ -10,58 +10,58 @@
 
 function TtRss(url) {
 
-	url = url || '/tt-rss/api/';
+  url = url || '/tt-rss/api/';
 
-	var self = this,
-		sid = null;
-		sid = Ember.$.cookie('ttrss_api_sid');
+  var self = this,
+    sid = null;
+    sid = Ember.$.cookie('ttrss_api_sid');
 
-	self.login = function(username, password) {
-		return api({op: 'login', user: username, password: password})
-			.then(function(data) {
-				sid = data.content.session_id;
-				return sid;
-			});
-	}
+  self.login = function(username, password) {
+    return api({op: 'login', user: username, password: password})
+      .then(function(data) {
+        sid = data.content.session_id;
+        return sid;
+      });
+  }
 
-	self.getCategories = function() {
-		return api({op: 'getCategories', enable_nested: 'false'})
-			.then(function(data) {
-				return data.content;
-			});
-	}
+  self.getCategories = function() {
+    return api({op: 'getCategories', enable_nested: 'false'})
+      .then(function(data) {
+        return data.content;
+      });
+  }
 
-	self.getFeeds = function(catId) {
-		return api({op: 'getFeeds', cat_id: catId, enable_nested: 'false'})
-			.then(function(data) {
-				return data.content;
-			});
-	}
+  self.getFeeds = function(catId) {
+    return api({op: 'getFeeds', cat_id: catId, enable_nested: 'false'})
+      .then(function(data) {
+        return data.content;
+      });
+  }
 
-	self.getHeadlines = function(feedId, limit, skip) {
-		return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip})
-			.then(function(data) {
-				// URL(entity) decode titles
-				data.content.title = $('<textarea />').html(data.content.title).val();
-				return data.content;
-			});
-	}
+  self.getHeadlines = function(feedId, limit, skip) {
+    return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip})
+      .then(function(data) {
+        // URL(entity) decode titles
+        data.content.title = $('<textarea />').html(data.content.title).val();
+        return data.content;
+      });
+  }
 
-	/* private functions */
-	
-	function api(data) {
-		// If we're not logging in, include the session id
-		if (data.op != 'login') {
-			data.sid = sid;
-		}
-		return Ember.$.ajax({
-			type: 'POST',
-			url: url,
-			contentType: 'application/json',
-			dataType: 'json',
-			data: JSON.stringify(data)
-		})
-		.then(function(data, textStatus, jqXHR) {
+  /* private functions */
+  
+  function api(data) {
+    // If we're not logging in, include the session id
+    if (data.op != 'login') {
+      data.sid = sid;
+    }
+    return Ember.$.ajax({
+      type: 'POST',
+      url: url,
+      contentType: 'application/json',
+      dataType: 'json',
+      data: JSON.stringify(data)
+    })
+    .then(function(data, textStatus, jqXHR) {
       return Ember.$.Deferred(function(deferred) {
         if (data.content.error) {
           console.log("api error: " + data.content.error);
@@ -69,7 +69,7 @@ function TtRss(url) {
         }
         return deferred.resolve(data);
       }).promise();
-		});
-	}
+    });
+  }
 
 }
