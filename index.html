@@ -89,15 +89,13 @@
       <a class="headline" {{bindAttr href="headline.link"}} target="_blank">{{headline.title}}</a>
     </li>
     {{/each}}
-    {{#if isLoading}}
     <li class="list-group-item">
+      {{#if isLoading}}
       <img src="images/ajax-loader.gif"/>
-    </li>
-    {{else}}
-    <li class="list-group-item">
+      {{else}}
       <a {{action 'loadMore'}}>Load more</a>
+      {{/if}}
     </li>
-    {{/if}}
     </ul>
     </script>
 
