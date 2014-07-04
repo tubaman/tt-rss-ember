@@ -73,6 +73,40 @@ App.HeadlinesRoute = App.AuthenticatedRoute.extend({
   }
 });
 
+App.Scrolling = Em.Mixin.create({
+
+  bindScrolling: function(opts) {
+    var onScroll, _this = this;
+
+    onScroll = function(){ 
+        return _this.scrolled(); 
+    };
+
+    $(document).bind('touchmove', onScroll);
+    $(window).bind('scroll', onScroll);
+  },
+
+  unbindScrolling: function() {
+    $(window).unbind('scroll');
+    $(document).unbind('touchmove');
+  }
+
+});
+
+App.HeadlinesView = Ember.View.extend(App.Scrolling, {
+  didInsertElement: function() {
+    this.bindScrolling();
+  },
+  willRemoveElement: function() {
+    this.unbindScrolling();
+  },
+  scrolled: function() {
+    if ($(window).height() - $(window).scrollTop() < 1000) {
+      this.get('controller').send('loadMore');
+    }
+  }
+});
+
 /* controllers */
 App.LoginController = Ember.Controller.extend({
   reset: function() {
@@ -110,11 +144,13 @@ App.HeadlinesController = Ember.Controller.extend({
   actions: {
     loadMore: function() {
       var self = this;
-      console.log("loading more")
-      self.set('isLoading', true);
-      return this.get('model').get('headlines').next().then(function() {
-        self.set('isLoading', false);
-      });
+      if (self.get('isLoading') == false) {
+        console.log("loading more")
+        self.set('isLoading', true);
+        return this.get('model').get('headlines').next().then(function() {
+          self.set('isLoading', false);
+        });
+      }
     }
   }
 });
