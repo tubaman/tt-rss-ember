@@ -41,6 +41,8 @@ function TtRss(url) {
 	self.getHeadlines = function(feedId, limit, skip) {
 		return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip})
 			.then(function(data) {
+				// URL(entity) decode titles
+				data.content.title = $('<textarea />').html(data.content.title).val();
 				return data.content;
 			});
 	}
