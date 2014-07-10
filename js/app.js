@@ -1,5 +1,16 @@
 window.App = Ember.Application.create();
 
+// Fix for browser auto-fill and databinding
+// http://stackoverflow.com/questions/22324473/browser-autofill-databinding
+Ember.TextField.reopen({
+  triggerEvents: function () {
+    var thisTextField = this;
+    Ember.run.next(function () {
+      thisTextField.$().trigger("change");
+    });
+  }.on("didInsertElement")
+});
+
 App.Router.map(function() {
   this.resource('login', { path: '/login' });
   this.resource('categories', { path: '/' });
