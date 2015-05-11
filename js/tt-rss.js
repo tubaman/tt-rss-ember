@@ -13,8 +13,10 @@ function TtRss(url) {
   url = url || '/tt-rss/api/';
 
   var self = this,
-    sid = null;
-    sid = Ember.$.cookie('ttrss_api_sid');
+    sid = null,
+    try_stored_credentials = true;
+
+  sid = Ember.$.cookie('ttrss_api_sid');
 
   self.login = function(username, password) {
     return api({op: 'login', user: username, password: password})
@@ -66,6 +68,17 @@ function TtRss(url) {
       return Ember.$.Deferred(function(deferred) {
         if (data.content.error) {
           console.log("api error: " + data.content.error);
+          if (
+              data.content.error == "NOT_LOGGED_IN" &&
+              try_stored_credentials &&
+              typeof(Storage) !== "undefined"
+             )
+          { 
+            var username = localStorage.getItem("ttrss_username");
+            var password = localStorage.getItem("ttrss_password");
+            self.login(username, password):
+
+          }
           return deferred.reject(data.content.error);
         }
         return deferred.resolve(data);
