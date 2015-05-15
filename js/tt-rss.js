@@ -14,13 +14,14 @@ function TtRss(url) {
 
   var self = this,
     sid = null;
-    sid = Ember.$.cookie('ttrss_api_sid');
+
+  sid = Ember.$.cookie('ttrss_api_sid');
 
   self.login = function(username, password) {
     return api({op: 'login', user: username, password: password})
       .then(function(data) {
         sid = data.content.session_id;
-        Ember.$.cookie('ttrss_api_sid', sid);
+        //Ember.$.cookie('ttrss_api_sid', sid, { path: window.location.pathname });
         return sid;
       });
   }
