@@ -28,9 +28,20 @@ App.AuthenticatedRoute = Ember.Route.extend({
   actions: {
     error: function(error, transition) {
       if (error == 'NOT_LOGGED_IN') {
-        var loginController = this.controllerFor('login');
+        var user = localStorage.getItem("tt-rss-user"),
+            password = localStorage.getItem("tt-rss-password"),
+            loginController = this.controllerFor('login');
+        console.debug("user: " + user);
+        console.debug("password: " + password);
+
         loginController.set('attemptedTransition', transition);
-        this.transitionTo('login');
+        if (user !== null) {
+          loginController.set('user', user);
+          loginController.set('password', password);
+          loginController.login();
+        } else {
+          this.transitionTo('login');
+        }
       } 
     }
   }
@@ -121,20 +132,11 @@ App.HeadlinesView = Ember.View.extend(App.Scrolling, {
 /* controllers */
 App.LoginController = Ember.Controller.extend({
   reset: function() {
-    var user = localStorage.getItem("tt-rss-user"),
-        password = localStorage.getItem("tt-rss-password");
-    console.debug("user: " + user);
-    console.debug("password: " + password);
-
     this.setProperties({
-      user: user,
-      password: password,
+      user: '',
+      password: '',
       errorMessage: '',
     });
-
-    if (user !== null) {
-      this.login();
-    }
   },
 
   login: function() {
@@ -156,6 +158,8 @@ App.LoginController = Ember.Controller.extend({
       },
       function(error) {
         self.set('errorMessage', "User and password combo don't match");
+        localStorage.removeItem("tt-rss-user");
+        localStorage.removeItem("tt-rss-password");
       });
   }
 });
