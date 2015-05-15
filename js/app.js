@@ -121,11 +121,20 @@ App.HeadlinesView = Ember.View.extend(App.Scrolling, {
 /* controllers */
 App.LoginController = Ember.Controller.extend({
   reset: function() {
+    var user = localStorage.getItem("tt-rss-user"),
+        password = localStorage.getItem("tt-rss-password");
+    console.debug("user: " + user);
+    console.debug("password: " + password);
+
     this.setProperties({
-      user: '',
-      password: '',
+      user: user,
+      password: password,
       errorMessage: '',
     });
+
+    if (user !== null) {
+      this.login();
+    }
   },
 
   login: function() {
@@ -135,6 +144,8 @@ App.LoginController = Ember.Controller.extend({
     ttrss.login(this.get('user'), this.get('password')).then(
       function(sid) {
         self.set('sid', sid);
+        localStorage.setItem("tt-rss-user", self.get("user"));
+        localStorage.setItem("tt-rss-password", self.get("password"));
         var attemptedTransition = self.get('attemptedTransition');
         if (attemptedTransition) {
           attemptedTransition.retry()
