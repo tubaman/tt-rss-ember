@@ -249,6 +249,16 @@ App.Headlines = Ember.ArrayProxy.create({
     .then(function(headlines) {
       headlines.forEach(function(data) {
         var headline = App.Headline.create();
+
+        // find image url
+        data.image_url = null;
+        for (var i=0; i<data.attachments.length; i++) {
+          var attachment = data.attachments[i];
+          if (attachment.content_type == "image/jpeg") {
+            data.image_url = attachment.content_url;
+          }
+        }
+
         headline.setProperties(data);
         content.pushObject(headline);
       });

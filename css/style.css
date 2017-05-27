@@ -12,3 +12,7 @@ body {
 	display: none;
 }
 */
+
+.list-group-item img {
+  height: 50px;
+}

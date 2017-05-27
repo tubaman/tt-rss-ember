@@ -86,6 +86,9 @@
     <ul class="headlines list-group">
     {{#each headline in model.headlines}}
     <li class="list-group-item">
+      {{#if headline.image_url}}
+      <img {{bindAttr src="headline.image_url"}} />
+      {{/if}}
       <a class="headline" {{bindAttr href="headline.link"}} target="_blank">{{headline.title}}</a>
     </li>
     {{/each}}

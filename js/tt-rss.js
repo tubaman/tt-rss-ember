@@ -41,10 +41,10 @@ function TtRss(url) {
   }
 
   self.getHeadlines = function(feedId, limit, skip) {
-    return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip})
+    return api({op: 'getHeadlines', feed_id: feedId, limit: limit, skip: skip, include_attachments: true})
       .then(function(data) {
         // URL(entity) decode titles
-        data.content.title = $('<textarea />').html(data.content.title).val();
+        //data.content.title = $('<textarea />').html(data.content.title).val();
         return data.content;
       });
   }
