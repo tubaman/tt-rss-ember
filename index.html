@@ -83,13 +83,19 @@
     </script>
 
     <script type="text/x-handlebars" data-template-name="headlines">
-    <ul class="headlines list-group">
+    <ul class="headlines media-list list-group">
     {{#each headline in model.headlines}}
     <li class="list-group-item">
+      <a class="headline" {{bindAttr href="headline.link"}} target="_blank">
       {{#if headline.image_url}}
-      <img {{bindAttr src="headline.image_url"}} />
+      <div class="media-left">
+      <img {{bindAttr src="headline.image_url"}} class="media-object" >
+      </div>
       {{/if}}
-      <a class="headline" {{bindAttr href="headline.link"}} target="_blank">{{headline.title}}</a>
+      <div class="media-body">
+      <p>{{headline.title}}</p>
+      </div>
+      </a>
     </li>
     {{/each}}
     <li class="list-group-item">
