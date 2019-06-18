@@ -21,7 +21,7 @@ function TtRss(url) {
     return api({op: 'login', user: username, password: password})
       .then(function(data) {
         sid = data.content.session_id;
-        //Ember.$.cookie('ttrss_api_sid', sid, { path: window.location.pathname });
+        Ember.$.cookie('ttrss_api_sid', sid, { path: window.location.pathname });
         return sid;
       });
   }
