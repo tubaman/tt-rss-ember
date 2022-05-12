@@ -259,6 +259,11 @@ App.Headlines = Ember.ArrayProxy.create({
           }
         }
 
+        // get over that fence!
+        if (data.link.match(/marketwatch.com/) != null) {
+          data.link = "https://12ft.io/proxy?q=" + data.link;
+        }
+
         headline.setProperties(data);
         content.pushObject(headline);
       });
